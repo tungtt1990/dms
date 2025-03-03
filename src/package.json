@@ -1,4 +1,8 @@
 {
+  "name": "dms-api",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
