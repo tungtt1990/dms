@@ -1,5 +1,7 @@
 // src/app.js
 const express = require('express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const app = express();
 
 // Middleware xử lý JSON
@@ -14,5 +16,29 @@ app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });
 });
+
+// 🔹 Cấu hình Swagger
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'DMS - API Documentation',
+      version: '1.0.0',
+      description: 'Tài liệu API tự động tạo bằng Swagger',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+        description: 'Local server',
+      },
+    ],
+  },
+  apis: ['./routes/*.js'], // Đọc tài liệu API từ các file route
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// 🔹 Thêm route Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 module.exports = app;

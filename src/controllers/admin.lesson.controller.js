@@ -106,7 +106,7 @@ exports.deleteLesson = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      'DELETE FROM lessons WHERE lesson_id = $1 RETURNING *',
+      'UPDATE lessons SET deleted_at = NOW() WHERE lesson_id = $1 RETURNING *',
       [id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Lesson not found' });

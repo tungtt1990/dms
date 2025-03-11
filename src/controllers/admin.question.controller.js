@@ -104,7 +104,7 @@ exports.updateQuestion = async (req, res) => {
     }
     // Nếu có mảng đáp án được cung cấp, xóa các đáp án cũ và chèn lại mới
     if (answers && Array.isArray(answers)) {
-      await pool.query('DELETE FROM answers WHERE question_id = $1', [id]);
+      await pool.query('UPDATE answers deleted_at = NOW() WHERE question_id = $1', [id]);
       for (const answer of answers) {
         await pool.query(`
           INSERT INTO answers (question_id, content, image_url, is_correct, order_index)
@@ -125,7 +125,7 @@ exports.updateQuestion = async (req, res) => {
 exports.deleteQuestion = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM questions WHERE question_id = $1 RETURNING question_id, content', [id]);
+    const result = await pool.query('UPDATE questions SET deleted_at = NOW() WHERE question_id = $1 RETURNING question_id, content', [id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Question not found' });
     res.json({ message: 'Question deleted', question: result.rows[0] });
   } catch (error) {

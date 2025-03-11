@@ -1,21 +1,5 @@
-// src/controllers/slidewatch.controller.js
+// src/controllers/admin.slidewatch.controller.js
 const pool = require('../config/db');
-
-exports.recordSession = async (req, res) => {
-  const { slide_lesson_id, session_start, session_end, milestones } = req.body;
-  const user_id = req.user.user_id;
-  try {
-    await pool.query(
-      `INSERT INTO slide_watch_sessions (user_id, slide_lesson_id, session_start, session_end, milestones)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [user_id, slide_lesson_id, session_start, session_end, JSON.stringify(milestones)]
-    );
-    res.json({ message: 'Slide watch session recorded' });
-  } catch (error) {
-    console.error('Record slide session error:', error);
-    res.status(500).json({ error: 'Failed to record slide session' });
-  }
-};
 
 // Endpoint cập nhật tổng hợp phiên xem slideshow
 exports.updateAggregate = async (req, res) => {

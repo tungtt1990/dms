@@ -1,7 +1,7 @@
-// src/routes/admin.lesson.routes.js
+// src/routes/admin.practice.routes.js
 const express = require('express');
 const router = express.Router();
-const adminLessonController = require('../controllers/admin.lesson.controller');
+const adminPracticeController = require('../controllers/admin.practice.controller');
 const { authenticateToken } = require('../middlewares/auth.middleware');
 const { isAdmin } = require('../middlewares/admin.middleware');
 
@@ -9,14 +9,14 @@ router.use(authenticateToken, isAdmin);
 
 /**
  * @swagger
- * /lessons:
+ * /practices:
  *   get:
- *     summary: Retrieve all lessons
- *     description: Retrieve a list of all lessons.
- *     tags: [Admin Lesson]
+ *     summary: Retrieve all exercises
+ *     description: Retrieve a list of all exercises.
+ *     tags: [Admin Practice]
  *     responses:
  *       200:
- *         description: A list of lessons.
+ *         description: A list of exercises.
  *         content:
  *           application/json:
  *             schema:
@@ -28,26 +28,26 @@ router.use(authenticateToken, isAdmin);
  *       403:
  *         description: Forbidden
  */
-// CRUD cho Lesson - Lấy tất cả bài học
-router.get('/lessons', adminLessonController.getAllLessons);
+// CRUD cho Practice - Lấy tất cả bài tập
+router.get('/practices', adminPracticeController.getAllExercises);
 
 /**
  * @swagger
- * /lessons/{id}:
+ * /practices/{id}:
  *   get:
- *     summary: Retrieve a lesson by ID
- *     description: Retrieve a specific lesson by its ID.
- *     tags: [Admin Lesson]
+ *     summary: Retrieve an exercise by ID
+ *     description: Retrieve a specific exercise by its ID.
+ *     tags: [Admin Practice]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The lesson ID
+ *         description: The exercise ID
  *     responses:
  *       200:
- *         description: A lesson object.
+ *         description: An exercise object.
  *         content:
  *           application/json:
  *             schema:
@@ -57,18 +57,18 @@ router.get('/lessons', adminLessonController.getAllLessons);
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Lesson not found
+ *         description: Exercise not found
  */
-// CRUD cho Lesson - Lấy bài học theo ID
-router.get('/lessons/:id', adminLessonController.getLessonById);
+// CRUD cho Practice - Lấy bài tập theo ID
+router.get('/practices/:id', adminPracticeController.getExerciseById);
 
 /**
  * @swagger
- * /lessons:
+ * /practices:
  *   post:
- *     summary: Create a new lesson
- *     description: Create a new lesson.
- *     tags: [Admin Lesson]
+ *     summary: Create a new exercise
+ *     description: Create a new exercise.
+ *     tags: [Admin Practice]
  *     requestBody:
  *       required: true
  *       content:
@@ -76,40 +76,40 @@ router.get('/lessons/:id', adminLessonController.getLessonById);
  *           schema:
  *             type: object
  *             properties:
- *               lesson_name:
+ *               exercise_name:
  *                 type: string
- *                 description: The name of the lesson
+ *                 description: The name of the exercise
  *               description:
  *                 type: string
- *                 description: The description of the lesson
+ *                 description: The description of the exercise
  *               content:
  *                 type: string
- *                 description: The content of the lesson
+ *                 description: The content of the exercise
  *     responses:
  *       201:
- *         description: Lesson created successfully.
+ *         description: Exercise created successfully.
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  */
-// CRUD cho Lesson - Tạo bài học mới
-router.post('/lessons', adminLessonController.createLesson);
+// CRUD cho Practice - Tạo bài tập mới
+router.post('/practices', adminPracticeController.createExercise);
 
 /**
  * @swagger
- * /lessons/{id}:
+ * /practices/{id}:
  *   put:
- *     summary: Update a lesson by ID
- *     description: Update a specific lesson by its ID.
- *     tags: [Admin Lesson]
+ *     summary: Update an exercise by ID
+ *     description: Update a specific exercise by its ID.
+ *     tags: [Admin Practice]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The lesson ID
+ *         description: The exercise ID
  *     requestBody:
  *       required: true
  *       content:
@@ -117,53 +117,53 @@ router.post('/lessons', adminLessonController.createLesson);
  *           schema:
  *             type: object
  *             properties:
- *               lesson_name:
+ *               exercise_name:
  *                 type: string
- *                 description: The name of the lesson
+ *                 description: The name of the exercise
  *               description:
  *                 type: string
- *                 description: The description of the lesson
+ *                 description: The description of the exercise
  *               content:
  *                 type: string
- *                 description: The content of the lesson
+ *                 description: The content of the exercise
  *     responses:
  *       200:
- *         description: Lesson updated successfully.
+ *         description: Exercise updated successfully.
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Lesson not found
+ *         description: Exercise not found
  */
-// CRUD cho Lesson - Cập nhật bài học theo ID
-router.put('/lessons/:id', adminLessonController.updateLesson);
+// CRUD cho Practice - Cập nhật bài tập theo ID
+router.put('/practices/:id', adminPracticeController.updateExercise);
 
 /**
  * @swagger
- * /lessons/{id}:
+ * /practices/{id}:
  *   delete:
- *     summary: Delete a lesson by ID
- *     description: Delete a specific lesson by its ID.
- *     tags: [Admin Lesson]
+ *     summary: Delete an exercise by ID
+ *     description: Delete a specific exercise by its ID.
+ *     tags: [Admin Practice]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: The lesson ID
+ *         description: The exercise ID
  *     responses:
  *       200:
- *         description: Lesson deleted successfully.
+ *         description: Exercise deleted successfully.
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Lesson not found
+ *         description: Exercise not found
  */
-// CRUD cho Lesson - Xóa bài học theo ID
-router.delete('/lessons/:id', adminLessonController.deleteLesson);
+// CRUD cho Practice - Xóa bài tập theo ID
+router.delete('/practices/:id', adminPracticeController.deleteExercise);
 
 module.exports = router;
