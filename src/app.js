@@ -28,8 +28,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'https://dms-api-alpha.vercel.app',
-        description: 'Local server',
+        url: 'http://localhost:3000/api-docs',
+        description: 'Production server',
       },
     ],
   },
@@ -40,5 +40,10 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // 🔹 Thêm route Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Xuất file JSON để test trên Postman
+app.get('/swagger.json', (req, res) => {
+  res.json(swaggerSpec);
+});
 
 module.exports = app;

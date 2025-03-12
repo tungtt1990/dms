@@ -1,12 +1,12 @@
 // src/controllers/lesson.controller.js
 const pool = require('../config/db');
 
-exports.getLessonsByCourse = async (req, res) => {
-  const { courseId } = req.params;
+exports.getLessonsBySubjectAndType = async (req, res) => {
+  const { subjectId, type } = req.params;
   try {
     const result = await pool.query(
-      'SELECT * FROM lessons WHERE course_id = $1 ORDER BY created_at ASC',
-      [courseId]
+      'SELECT * FROM lessons WHERE subject_id = $1 and type = $2 ORDER BY created_at ASC',
+      [subjectId, type] 
     );
     res.json({ lessons: result.rows });
   } catch (error) {

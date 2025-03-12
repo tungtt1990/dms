@@ -1,20 +1,23 @@
-// src/controllers/admin.practiceSession.controller.js
 const pool = require('../config/db');
 
-// Lấy danh sách tất cả các phiên làm bài tập (practice sessions)
 exports.getAllPracticeSessions = async (req, res) => {
   try {
+    const { page = 1, limit = 20, sort_by = 'created_at', sort_order = 'DESC' } = req.query;
+    const offset = (page - 1) * limit;
     const result = await pool.query(
-      'SELECT * FROM practice_sessions WHERE deleted_at IS NULL ORDER BY created_at DESC'
+      `SELECT * FROM practice_sessions 
+       WHERE deleted_at IS NULL
+       ORDER BY ${sort_by} ${sort_order}
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
     );
-    res.json({ practice_sessions: result.rows });
+    res.json({ practice_sessions: result.rows, page: Number(page), limit: Number(limit) });
   } catch (error) {
     console.error('Error fetching practice sessions:', error);
     res.status(500).json({ error: 'Failed to fetch practice sessions' });
   }
 };
 
-// Lấy thông tin một phiên làm bài tập theo ID
 exports.getPracticeSessionById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -22,9 +25,8 @@ exports.getPracticeSessionById = async (req, res) => {
       'SELECT * FROM practice_sessions WHERE session_id = $1 AND deleted_at IS NULL',
       [id]
     );
-    if (result.rows.length === 0) {
+    if (result.rows.length === 0)
       return res.status(404).json({ error: 'Practice session not found' });
-    }
     res.json({ practice_session: result.rows[0] });
   } catch (error) {
     console.error('Error fetching practice session:', error);
@@ -32,9 +34,7 @@ exports.getPracticeSessionById = async (req, res) => {
   }
 };
 
-// Tạo phiên làm bài tập mới
 exports.createPracticeSession = async (req, res) => {
-  // Expect body: exercise_id, user_id, start_time, end_time, answers (JSON), score, status
   const { exercise_id, user_id, start_time, end_time, answers, score, status } = req.body;
   try {
     const result = await pool.query(
@@ -49,7 +49,6 @@ exports.createPracticeSession = async (req, res) => {
   }
 };
 
-// Cập nhật phiên làm bài tập
 exports.updatePracticeSession = async (req, res) => {
   const { id } = req.params;
   const { exercise_id, user_id, start_time, end_time, answers, score, status } = req.body;
@@ -67,9 +66,8 @@ exports.updatePracticeSession = async (req, res) => {
        WHERE session_id = $8 AND deleted_at IS NULL RETURNING *`,
       [exercise_id, user_id, start_time, end_time, JSON.stringify(answers), score, status, id]
     );
-    if (result.rows.length === 0) {
+    if (result.rows.length === 0)
       return res.status(404).json({ error: 'Practice session not found' });
-    }
     res.json({ message: 'Practice session updated', practice_session: result.rows[0] });
   } catch (error) {
     console.error('Error updating practice session:', error);
@@ -77,22 +75,21 @@ exports.updatePracticeSession = async (req, res) => {
   }
 };
 
-// Xóa (soft-delete) phiên làm bài tập
 exports.deletePracticeSession = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      `UPDATE practice_sessions 
-       SET deleted_at = NOW() 
+      `UPDATE practice_sessions SET deleted_at = NOW() 
        WHERE session_id = $1 AND deleted_at IS NULL RETURNING *`,
       [id]
     );
-    if (result.rows.length === 0) {
+    if (result.rows.length === 0)
       return res.status(404).json({ error: 'Practice session not found' });
-    }
     res.json({ message: 'Practice session deleted', practice_session: result.rows[0] });
   } catch (error) {
     console.error('Error deleting practice session:', error);
     res.status(500).json({ error: 'Failed to delete practice session' });
   }
 };
+
+module.exports = exports;

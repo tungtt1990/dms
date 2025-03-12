@@ -6,18 +6,24 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
 
 /**
  * @swagger
- * /lessons/{courseId}:
+ * /lessons/{subjectId}/{type}:
  *   get:
- *     summary: Retrieve lessons by course ID
- *     description: Retrieve a list of lessons for a specific course by course ID.
+ *     summary: Retrieve lessons by subject ID and type
+ *     description: Retrieve a list of lessons for a specific subject by subject ID and type.
  *     tags: [Lesson]
  *     parameters:
  *       - in: path
- *         name: courseId
+ *         name: subjectId
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the course
+ *         description: The ID of the subject
+ *       - in: path
+ *         name: type
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The type of the lesson
  *     responses:
  *       200:
  *         description: A list of lessons.
@@ -32,9 +38,10 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Course not found
+ *         description: Lessons not found
  */
-// Lấy danh sách bài giảng cho một khóa học
-router.get('/lessons/:courseId', authenticateToken, lessonController.getLessonsByCourse);
+// Lấy danh sách bài giảng theo ID môn học và loại
+// Absolute path: /lessons/{subjectId}/{type}
+router.get('/lessons/:subjectId/:type', authenticateToken, lessonController.getLessonsBySubjectAndType);
 
 module.exports = router;

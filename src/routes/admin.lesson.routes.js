@@ -9,7 +9,7 @@ router.use(authenticateToken, isAdmin);
 
 /**
  * @swagger
- * /lessons:
+ * /admin/lessons:
  *   get:
  *     summary: Retrieve all lessons
  *     description: Retrieve a list of all lessons.
@@ -29,11 +29,12 @@ router.use(authenticateToken, isAdmin);
  *         description: Forbidden
  */
 // CRUD cho Lesson - Lấy tất cả bài học
-router.get('/lessons', adminLessonController.getAllLessons);
+// Absolute path: /admin/lessons
+router.get('/', adminLessonController.getAllLessons);
 
 /**
  * @swagger
- * /lessons/{id}:
+ * /admin/lessons/{id}:
  *   get:
  *     summary: Retrieve a lesson by ID
  *     description: Retrieve a specific lesson by its ID.
@@ -60,11 +61,12 @@ router.get('/lessons', adminLessonController.getAllLessons);
  *         description: Lesson not found
  */
 // CRUD cho Lesson - Lấy bài học theo ID
-router.get('/lessons/:id', adminLessonController.getLessonById);
+// Absolute path: /admin/lessons/{id}
+router.get('/:id', adminLessonController.getLessonById);
 
 /**
  * @swagger
- * /lessons:
+ * /admin/lessons:
  *   post:
  *     summary: Create a new lesson
  *     description: Create a new lesson.
@@ -94,11 +96,12 @@ router.get('/lessons/:id', adminLessonController.getLessonById);
  *         description: Forbidden
  */
 // CRUD cho Lesson - Tạo bài học mới
-router.post('/lessons', adminLessonController.createLesson);
+// Absolute path: /admin/lessons
+router.post('/', adminLessonController.createLesson);
 
 /**
  * @swagger
- * /lessons/{id}:
+ * /admin/lessons/{id}:
  *   put:
  *     summary: Update a lesson by ID
  *     description: Update a specific lesson by its ID.
@@ -137,11 +140,12 @@ router.post('/lessons', adminLessonController.createLesson);
  *         description: Lesson not found
  */
 // CRUD cho Lesson - Cập nhật bài học theo ID
-router.put('/lessons/:id', adminLessonController.updateLesson);
+// Absolute path: /admin/lessons/{id}
+router.put('/:id', adminLessonController.updateLesson);
 
 /**
  * @swagger
- * /lessons/{id}:
+ * /admin/lessons/{id}:
  *   delete:
  *     summary: Delete a lesson by ID
  *     description: Delete a specific lesson by its ID.
@@ -164,6 +168,7 @@ router.put('/lessons/:id', adminLessonController.updateLesson);
  *         description: Lesson not found
  */
 // CRUD cho Lesson - Xóa bài học theo ID
-router.delete('/lessons/:id', adminLessonController.deleteLesson);
+// Absolute path: /admin/lessons/{id}
+router.delete('/:id', adminLessonController.deleteLesson);
 
 module.exports = router;

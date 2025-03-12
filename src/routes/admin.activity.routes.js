@@ -9,11 +9,34 @@ router.use(authenticateToken, isAdmin);
 
 /**
  * @swagger
- * /videowatch:
+ * /admin/activity/videowatch:
  *   get:
  *     summary: Retrieve all video watch logs
  *     description: Retrieve all video watch logs with optional pagination and date filtering.
  *     tags: [Admin Activity]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: The page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: The number of items per page
+ *       - in: query
+ *         name: start_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The start date for filtering logs
+ *       - in: query
+ *         name: end_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The end date for filtering logs
  *     responses:
  *       200:
  *         description: A list of video watch logs.
@@ -33,11 +56,34 @@ router.get('/videowatch', adminActivityController.getAllVideoWatchLogs);
 
 /**
  * @swagger
- * /slidewatch:
+ * /admin/activity/slidewatch:
  *   get:
  *     summary: Retrieve all slide watch logs
  *     description: Retrieve all slide watch logs.
  *     tags: [Admin Activity]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: The page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: The number of items per page
+ *       - in: query
+ *         name: start_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The start date for filtering logs
+ *       - in: query
+ *         name: end_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The end date for filtering logs
  *     responses:
  *       200:
  *         description: A list of slide watch logs.

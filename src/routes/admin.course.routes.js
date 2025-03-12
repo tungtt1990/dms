@@ -9,7 +9,7 @@ router.use(authenticateToken, isAdmin);
 
 /**
  * @swagger
- * /courses:
+ * /admin/courses:
  *   get:
  *     summary: Retrieve all courses
  *     description: Retrieve a list of all courses.
@@ -29,11 +29,12 @@ router.use(authenticateToken, isAdmin);
  *         description: Forbidden
  */
 // CRUD cho Course - Lấy tất cả khóa học
-router.get('/courses', adminCourseController.getAllCourses);
+// Absolute path: /admin/courses
+router.get('/', adminCourseController.getAllCourses);
 
 /**
  * @swagger
- * /courses/{id}:
+ * /admin/courses/{id}:
  *   get:
  *     summary: Retrieve a course by ID
  *     description: Retrieve a specific course by its ID.
@@ -60,11 +61,12 @@ router.get('/courses', adminCourseController.getAllCourses);
  *         description: Course not found
  */
 // CRUD cho Course - Lấy khóa học theo ID
-router.get('/courses/:id', adminCourseController.getCourseById);
+// Absolute path: /admin/courses/{id}
+router.get('/:id', adminCourseController.getCourseById);
 
 /**
  * @swagger
- * /courses:
+ * /admin/courses:
  *   post:
  *     summary: Create a new course
  *     description: Create a new course.
@@ -99,11 +101,12 @@ router.get('/courses/:id', adminCourseController.getCourseById);
  *         description: Forbidden
  */
 // CRUD cho Course - Tạo khóa học mới
-router.post('/courses', adminCourseController.createCourse);
+// Absolute path: /admin/courses
+router.post('/', adminCourseController.createCourse);
 
 /**
  * @swagger
- * /courses/{id}:
+ * /admin/courses/{id}:
  *   put:
  *     summary: Update a course by ID
  *     description: Update a specific course by its ID.
@@ -147,11 +150,12 @@ router.post('/courses', adminCourseController.createCourse);
  *         description: Course not found
  */
 // CRUD cho Course - Cập nhật khóa học theo ID
-router.put('/courses/:id', adminCourseController.updateCourse);
+// Absolute path: /admin/courses/{id}
+router.put('/:id', adminCourseController.updateCourse);
 
 /**
  * @swagger
- * /courses/{id}:
+ * /admin/courses/{id}:
  *   delete:
  *     summary: Delete a course by ID
  *     description: Delete a specific course by its ID.
@@ -174,6 +178,7 @@ router.put('/courses/:id', adminCourseController.updateCourse);
  *         description: Course not found
  */
 // CRUD cho Course - Xóa khóa học theo ID
-router.delete('/courses/:id', adminCourseController.deleteCourse);
+// Absolute path: /admin/courses/{id}
+router.delete('/:id', adminCourseController.deleteCourse);
 
 module.exports = router;

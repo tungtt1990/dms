@@ -29,11 +29,11 @@ router.use(authenticateToken, isAdmin);
  *         description: Forbidden
  */
 // CRUD cho Practice - Lấy tất cả bài tập
-router.get('/practices', adminPracticeController.getAllExercises);
+router.get('/', adminPracticeController.getAllExercises);
 
 /**
  * @swagger
- * /practices/{id}:
+ * /admin/practices/{id}:
  *   get:
  *     summary: Retrieve an exercise by ID
  *     description: Retrieve a specific exercise by its ID.
@@ -60,7 +60,7 @@ router.get('/practices', adminPracticeController.getAllExercises);
  *         description: Exercise not found
  */
 // CRUD cho Practice - Lấy bài tập theo ID
-router.get('/practices/:id', adminPracticeController.getExerciseById);
+router.get('/:id', adminPracticeController.getExerciseById);
 
 /**
  * @swagger
@@ -94,11 +94,11 @@ router.get('/practices/:id', adminPracticeController.getExerciseById);
  *         description: Forbidden
  */
 // CRUD cho Practice - Tạo bài tập mới
-router.post('/practices', adminPracticeController.createExercise);
+router.post('/', adminPracticeController.createExercise);
 
 /**
  * @swagger
- * /practices/{id}:
+ * /admin/practices/{id}:
  *   put:
  *     summary: Update an exercise by ID
  *     description: Update a specific exercise by its ID.
@@ -137,11 +137,11 @@ router.post('/practices', adminPracticeController.createExercise);
  *         description: Exercise not found
  */
 // CRUD cho Practice - Cập nhật bài tập theo ID
-router.put('/practices/:id', adminPracticeController.updateExercise);
+router.put('/:id', adminPracticeController.updateExercise);
 
 /**
  * @swagger
- * /practices/{id}:
+ * /admin/practices/{id}:
  *   delete:
  *     summary: Delete an exercise by ID
  *     description: Delete a specific exercise by its ID.
@@ -164,6 +164,47 @@ router.put('/practices/:id', adminPracticeController.updateExercise);
  *         description: Exercise not found
  */
 // CRUD cho Practice - Xóa bài tập theo ID
-router.delete('/practices/:id', adminPracticeController.deleteExercise);
+router.delete('/:id', adminPracticeController.deleteExercise);
+
+/**
+ * @swagger
+ * /practice-exercise-questions:
+ *   post:
+ *     summary: Add multiple questions to a practice exercise
+ *     description: Add multiple questions to a practice exercise.
+ *     tags: [Admin Practice Exercise Question]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 question_text:
+ *                   type: string
+ *                   description: The text of the question
+ *                 options:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       option_text:
+ *                         type: string
+ *                         description: The text of the option
+ *                       is_correct:
+ *                         type: boolean
+ *                         description: Whether the option is correct
+ *     responses:
+ *       201:
+ *         description: Questions added successfully.
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+// Endpoint thêm nhiều câu hỏi vào bài tập thực hành
+router.post('/practice-exercise-questions', adminPracticeController.createMultiplePracticeExerciseQuestions);
 
 module.exports = router;

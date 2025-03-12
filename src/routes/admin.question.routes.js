@@ -29,7 +29,7 @@ router.use(authenticateToken, isAdmin);
  *         description: Forbidden
  */
 // GET tất cả câu hỏi (bao gồm đáp án)
-router.get('/questions', adminQuestionController.getAllQuestions);
+router.get('/', adminQuestionController.getAllQuestions);
 
 /**
  * @swagger
@@ -60,7 +60,7 @@ router.get('/questions', adminQuestionController.getAllQuestions);
  *         description: Question not found
  */
 // GET chi tiết câu hỏi theo ID (bao gồm danh sách đáp án)
-router.get('/questions/:id', adminQuestionController.getQuestionById);
+router.get('/:id', adminQuestionController.getQuestionById);
 
 /**
  * @swagger
@@ -99,7 +99,7 @@ router.get('/questions/:id', adminQuestionController.getQuestionById);
  *         description: Forbidden
  */
 // POST tạo câu hỏi mới cùng với các đáp án
-router.post('/questions', adminQuestionController.createQuestion);
+router.post('/', adminQuestionController.createQuestion);
 
 /**
  * @swagger
@@ -147,7 +147,7 @@ router.post('/questions', adminQuestionController.createQuestion);
  *         description: Question not found
  */
 // PUT cập nhật câu hỏi (và cập nhật đáp án)
-router.put('/questions/:id', adminQuestionController.updateQuestion);
+router.put('/:id', adminQuestionController.updateQuestion);
 
 /**
  * @swagger
@@ -174,6 +174,6 @@ router.put('/questions/:id', adminQuestionController.updateQuestion);
  *         description: Question not found
  */
 // DELETE xóa câu hỏi (đáp án sẽ bị xóa theo cascade)
-router.delete('/questions/:id', adminQuestionController.deleteQuestion);
+router.delete('/:id', adminQuestionController.deleteQuestion);
 
 module.exports = router;
