@@ -28,7 +28,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000/api-docs',
+        url: 'https://dms-api-alpha.vercel.app/api-docs',
         description: 'Production server',
       },
     ],
