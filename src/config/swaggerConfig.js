@@ -11,14 +11,27 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:3000/api", // Local server
-                description: "Localhost Server",
+                url: process.env.NODE_ENV === 'production' ? "https://dms-api-alpha.vercel.app/api" : "http://localhost:3000/api",
+                description: process.env.NODE_ENV === 'production' ? "Production Server" : "Local Server",
             },
-            {
-                url: "https://dms-api-alpha.vercel.app/api",
-                description: "Production Server",
-            },
+
         ],
+        components: {
+            securitySchemes: {
+                // Định nghĩa bearerAuth cho token (JWT)
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT"
+                }
+            }
+        },
+        // Áp dụng xác thực toàn cục cho các API (có thể override ở từng endpoint nếu cần)
+        security: [
+            {
+                bearerAuth: []
+            }
+        ]
     },
     apis: ["./routes/*.js"], // Định nghĩa API từ các file route
 };
