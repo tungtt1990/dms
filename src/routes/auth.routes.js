@@ -40,7 +40,7 @@ router.post('/register', authController.register);
  * /auth/login:
  *   post:
  *     summary: Login a user
- *     description: Login a user with email and password.
+ *     description: Login a user with username and password.
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -49,9 +49,9 @@ router.post('/register', authController.register);
  *           schema:
  *             type: object
  *             properties:
- *               email:
+ *               username:
  *                 type: string
- *                 description: The email of the user
+ *                 description: The username of the user
  *               password:
  *                 type: string
  *                 description: The password of the user

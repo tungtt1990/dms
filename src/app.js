@@ -1,7 +1,6 @@
 // src/app.js
 const express = require('express');
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+const setupSwagger = require("./config/swaggerConfig");
 const app = express();
 
 // Middleware xử lý JSON
@@ -18,32 +17,6 @@ app.use((err, req, res, next) => {
 });
 
 // 🔹 Cấu hình Swagger
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'DMS - API Documentation',
-      version: '1.0.0',
-      description: 'Tài liệu API tự động tạo bằng Swagger',
-    },
-    servers: [
-      {
-        url: 'https://dms-api-alpha.vercel.app/api-docs',
-        description: 'Production server',
-      },
-    ],
-  },
-  apis: ['./routes/*.js'], // Đọc tài liệu API từ các file route
-};
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-
-// 🔹 Thêm route Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Xuất file JSON để test trên Postman
-app.get('/swagger.json', (req, res) => {
-  res.json(swaggerSpec);
-});
+setupSwagger(app);
 
 module.exports = app;
