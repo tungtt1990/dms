@@ -16,6 +16,7 @@ router.use('/admin/practice', require('./admin.practice.routes.js'));
 
 // Các router khác...
 router.use('/lessons', require('./lesson.routes'));
+router.use('/subjects', require('./subjects.routes'));
 router.use('/videowatch', require('./videowatch.routes'));
 router.use('/slidewatch', require('./slidewatch.routes'));
 router.use('/testpapers', require('./testpaper.routes'));
