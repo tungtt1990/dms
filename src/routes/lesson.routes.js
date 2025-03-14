@@ -6,7 +6,7 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
 
 /**
  * @swagger
- * /lessons/{subjectId}/{type}:
+ * /lessons/{subjectId}:
  *   get:
  *     summary: Retrieve lessons by subject ID and type
  *     description: Retrieve a list of lessons for a specific subject by subject ID and type.
@@ -18,12 +18,6 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
  *         schema:
  *           type: string
  *         description: The ID of the subject
- *       - in: path
- *         name: type
- *         required: true
- *         schema:
- *           type: string
- *         description: The type of the lesson
  *     responses:
  *       200:
  *         description: A list of lessons.
@@ -41,7 +35,7 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
  *         description: Lessons not found
  */
 // Lấy danh sách bài giảng theo ID môn học và loại
-// Absolute path: /lessons/{subjectId}/{type}
-router.get('/lessons/:subjectId/:type', authenticateToken, lessonController.getLessonsBySubjectAndType);
+// Absolute path: /{subjectId}
+router.get('/:subjectId', authenticateToken, lessonController.getSlideLessons);
 
 module.exports = router;

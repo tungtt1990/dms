@@ -12,7 +12,7 @@ router.use(authenticateToken, isAdmin);
 
 /**
  * @swagger
- * /users:
+ * /admin/users:
  *   get:
  *     summary: Retrieve all users
  *     description: Retrieve a list of all users.
@@ -32,11 +32,11 @@ router.use(authenticateToken, isAdmin);
  *         description: Forbidden
  */
 // GET /api/admin/users - Lấy danh sách tất cả người dùng
-router.get('/users', adminUserController.getAllUsers);
+router.get('/', adminUserController.getAllUsers);
 
 /**
  * @swagger
- * /users/{id}:
+ * /admin/users/{id}:
  *   get:
  *     summary: Retrieve a user by ID
  *     description: Retrieve a specific user by their ID.
@@ -63,11 +63,11 @@ router.get('/users', adminUserController.getAllUsers);
  *         description: User not found
  */
 // GET /api/admin/users/:id - Lấy thông tin chi tiết của 1 người dùng theo id
-router.get('/users/:id', adminUserController.getUserById);
+router.get('/:id', adminUserController.getUserById);
 
 /**
  * @swagger
- * /users:
+ * /admin/users:
  *   post:
  *     summary: Create a new user
  *     description: Create a new user.
@@ -97,11 +97,11 @@ router.get('/users/:id', adminUserController.getUserById);
  *         description: Forbidden
  */
 // POST /api/admin/users - Tạo mới người dùng
-router.post('/users', adminUserController.createUser);
+router.post('/', adminUserController.createUser);
 
 /**
  * @swagger
- * /users/{id}:
+ * /admin/users/{id}:
  *   put:
  *     summary: Update a user by ID
  *     description: Update a specific user by their ID.
@@ -140,11 +140,11 @@ router.post('/users', adminUserController.createUser);
  *         description: User not found
  */
 // PUT /api/admin/users/:id - Cập nhật thông tin người dùng
-router.put('/users/:id', adminUserController.updateUser);
+router.put('/:id', adminUserController.updateUser);
 
 /**
  * @swagger
- * /users/{id}:
+ * /admin/users/{id}:
  *   delete:
  *     summary: Delete a user by ID
  *     description: Delete a specific user by their ID.
@@ -167,11 +167,11 @@ router.put('/users/:id', adminUserController.updateUser);
  *         description: User not found
  */
 // DELETE /api/admin/users/:id - Xóa người dùng
-router.delete('/users/:id', adminUserController.deleteUser);
+router.delete('/:id', adminUserController.deleteUser);
 
 /**
  * @swagger
- * /users/import:
+ * /admin/users/import:
  *   post:
  *     summary: Import users from an Excel file
  *     description: Import users from an Excel file.
@@ -195,7 +195,7 @@ router.delete('/users/:id', adminUserController.deleteUser);
  *         description: Forbidden
  */
 // POST /api/admin/users/importUsers - Import Users từ file excel
-router.post('/users/import', upload.single('file'), adminUserController.importUsers);
+router.post('/import', upload.single('file'), adminUserController.importUsers);
 
 /**
  * @swagger
@@ -229,6 +229,6 @@ router.post('/users/import', upload.single('file'), adminUserController.importUs
  *         description: Forbidden
  */
 // Endpoint riêng tạo user admin
-router.post('/users/admin', adminUserController.createAdminUser);
+router.post('/admin', adminUserController.createAdminUser);
 
 module.exports = router;
