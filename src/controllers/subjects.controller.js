@@ -17,7 +17,7 @@ exports.getAllSubjects = async (req, res) => {
       ORDER BY ${sort_by} ${sort_order}
     `;
     const result = await pool.query(query, params);
-    res.json({ subjects: result.rows, page: Number(page), limit: Number(limit) });
+    res.json({ subjects: result.rows});
   } catch (error) {
     console.error('Error fetching subjects:', error);
     res.status(500).json({ error: 'Failed to fetch subjects' });
