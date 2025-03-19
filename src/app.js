@@ -1,7 +1,9 @@
 // src/app.js
 const express = require('express');
 const setupSwagger = require("./config/swaggerConfig");
+var cors = require('cors');
 const app = express();
+app.use(cors())
 
 // Middleware xử lý JSON
 app.use(express.json());
