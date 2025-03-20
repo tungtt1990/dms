@@ -51,7 +51,7 @@ exports.getSlideLessons = async (req, res) => {
       title: row.title,
       description: row.description,
       slide_lesson_id: row.slide_lesson_id,
-      total_slides: row.total_slides,
+      total_slides: row.slide_count,
       path_url: row.path_url,
       extension: row.extension,
       total_time: row.total_time,
