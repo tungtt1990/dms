@@ -13,7 +13,11 @@ exports.exportProgressLearning = async (req, res) => {
          FROM student_learning_progress slp
          JOIN users u ON slp.user_id = u.user_id
          JOIN subjects s ON slp.subject_id = s.subject_id
-         JOIN courses c ON u.course_id = c.course_id
+         JOIN courses c ON u.course_i
+         
+         
+         
+         d = c.course_id
          WHERE slp.user_id = $1`,
       [user_id]
     );
