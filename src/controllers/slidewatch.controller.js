@@ -1,87 +1,63 @@
 // src/controllers/slidewatch.controller.js
 const pool = require('../config/db');
 
-exports.recordSession = async (req, res) => {
-  const { slide_lesson_id, session_start, session_end, milestones } = req.body;
-  const user_id = req.user.user_id;
-  try {
-    await pool.query(
-      `INSERT INTO slide_watch_sessions (user_id, slide_lesson_id, session_start, session_end, milestones)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [user_id, slide_lesson_id, session_start, session_end, JSON.stringify(milestones)]
-    );
-    res.json({ message: 'Slide watch session recorded' });
-  } catch (error) {
-    console.error('Record slide session error:', error);
-    res.status(500).json({ error: 'Failed to record slide session' });
-  }
-};
-
 // Endpoint cập nhật tổng hợp phiên xem slideshow
-exports.updateAggregate = async (req, res) => {
-  const { slide_lesson_id, additional_watch_time, last_stop_time, status } = req.body;
-  const user_id = req.user.user_id;
-
+exports.updateSlideCompleted = async (req, res) => {
   try {
-    // Lấy min_time_per_slide từ slidelessons
-    const slideRes = await pool.query(
-      'SELECT min_time_per_slide, slide_count, total_time FROM slidelessons WHERE slide_lesson_id = $1',
+    const { user_id } = req.user; // Lấy user_id từ token
+    const { slide_lesson_id, current_slide_number, slide_number_completed } = req.body;
+
+    if (!slide_lesson_id || !current_slide_number) {
+      return res.status(400).json({ error: "Thiếu thông tin đầu vào!" });
+    }
+
+    // Lấy thời gian tối thiểu cần xem để tính là hoàn thành
+    const slideLesson = await pool.query(
+      `SELECT slide_count, min_percentage_required FROM slide_lessons WHERE slide_lesson_id = $1`,
       [slide_lesson_id]
     );
-    if (slideRes.rows.length === 0) {
-      return res.status(404).json({ error: 'Slide lesson not found' });
-    }
-    const { min_time_per_slide, total_time } = slideRes.rows[0];
-    
-    // Giả sử rằng tổng thời gian tối đa đạt được cho từng slide là min_time_per_slide
-    // Và achieved_percentage = (total_watch_time / (min_time_per_slide * slide_count)) * 100
-    const slideCount = slideRes.rows[0].slide_count || 1;
-    const maxTotalTime = min_time_per_slide * slideCount;
 
-    const aggRes = await pool.query(
-      'SELECT total_watch_time FROM slide_watch_aggregates WHERE user_id = $1 AND slide_lesson_id = $2',
+    if (slideLesson.rows.length === 0) {
+      return res.status(404).json({ error: "Bài giảng slide không tồn tại!" });
+    }
+    const slideCount = slideLesson.rows[0].slide_count;
+    const minPercentageRequired = slideLesson.rows[0].min_percentage_required;
+
+    // Lấy danh sách slide_page_completed hiện tại
+    const result = await pool.query(
+      `SELECT slide_page_completed FROM slide_watch_progress 
+         WHERE user_id = $1 AND slide_lesson_id = $2`,
       [user_id, slide_lesson_id]
     );
 
-    if (aggRes.rows.length > 0) {
-      let currentTime = aggRes.rows[0].total_watch_time || 0;
-      let newTime = currentTime + additional_watch_time;
-      if (newTime > maxTotalTime) newTime = maxTotalTime;
-      const achieved_percentage = Math.round((newTime / maxTotalTime) * 100);
-      const newStatus = (newTime >= min_time_per_slide * slideCount) ? 'complete' : status;
-      await pool.query(
-        `UPDATE slide_watch_aggregates 
-         SET last_stop_time = $1, total_watch_time = $2, updated_at = NOW()
-         WHERE user_id = $3 AND slide_lesson_id = $4`,
-        [last_stop_time, newTime, user_id, slide_lesson_id]
-      );
-      // Optionally, cập nhật achieved_percentage vào một cột nếu có
-      await pool.query(
-        `UPDATE slidelessons
-         SET achieved_percentage = $1
-         WHERE slide_lesson_id = $2`,
-        [achieved_percentage, slide_lesson_id]
-      );
-    } else {
-      let initialTime = additional_watch_time;
-      if (initialTime > maxTotalTime) initialTime = maxTotalTime;
-      const achieved_percentage = Math.round((initialTime / maxTotalTime) * 100);
-      const newStatus = (initialTime >= min_time_per_slide * slideCount) ? 'complete' : status;
-      await pool.query(
-        `INSERT INTO slide_watch_aggregates (user_id, slide_lesson_id, last_stop_time, total_watch_time, status)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [user_id, slide_lesson_id, last_stop_time, initialTime, newStatus]
-      );
-      await pool.query(
-        `UPDATE slidelessons
-         SET achieved_percentage = $1
-         WHERE slide_lesson_id = $2`,
-        [achieved_percentage, slide_lesson_id]
-      );
+    let completedSlides = result.rows.length > 0 ? result.rows[0].slide_page_completed : [];
+
+    // Nếu slide đã có trong danh sách, không thêm lại
+    if (!completedSlides.includes(slide_number_completed)) {
+      completedSlides.push(slide_number_completed);
     }
-    res.json({ message: 'Slide aggregate updated' });
+
+    let viewed_percentage = Math.round((completedSlides.length / slideCount) * 100);
+    let completion_status = viewed_percentage >= minPercentageRequired ? 'completed' : 'in-progress';
+
+    // Cập nhật vào slide_watch_progress
+    await pool.query(
+      `INSERT INTO slide_watch_progress (user_id, slide_lesson_id, current_slide_number, completed_slides, viewed_percentage, slide_page_completed, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)
+         ON CONFLICT (user_id, slide_lesson_id) 
+         DO UPDATE SET 
+            current_slide_number = EXCLUDED.current_slide_number,
+            completed_slides = EXCLUDED.completed_slides + 1,
+            viewed_percentage = EXCLUDED.viewed_percentage,
+            slide_page_completed = EXCLUDED.slide_page_completed,
+            completion_status = $7,
+            updated_at = CURRENT_TIMESTAMP`,
+      [user_id, slide_lesson_id, current_slide_number, completedSlides.length, viewed_percentage, JSON.stringify(completedSlides), completion_status]
+    );
+
+    res.json({ message: "Cập nhật tiến trình thành công!", slide_page_completed: completedSlides });
   } catch (error) {
-    console.error('Update slide aggregate error:', error);
-    res.status(500).json({ error: 'Failed to update slide aggregate' });
+    console.error("Lỗi khi cập nhật tiến trình slide:", error);
+    res.status(500).json({ error: "Lỗi server!" });
   }
 };
