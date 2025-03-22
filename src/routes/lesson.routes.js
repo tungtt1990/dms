@@ -37,5 +37,6 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
 // Lấy danh sách bài giảng theo ID môn học và loại
 // Absolute path: /{subjectId}
 router.get('/:subjectId/:lessonType', authenticateToken, lessonController.getSlideLessons);
+router.get('/practice-exercises/:exercise_id', authenticateToken, lessonController.getPracticeExercisesDetails);
 
 module.exports = router;

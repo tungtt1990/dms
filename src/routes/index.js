@@ -20,5 +20,6 @@ router.use('/subjects', require('./subjects.routes'));
 router.use('/videowatch', require('./videowatch.routes'));
 router.use('/slidewatch', require('./slidewatch.routes'));
 router.use('/testpapers', require('./testpaper.routes'));
+router.use('/teacher', require('./teacher.routes'));
 
 module.exports = router;

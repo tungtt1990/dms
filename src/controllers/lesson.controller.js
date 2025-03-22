@@ -127,8 +127,8 @@ async function getVideoLessons(userId, subjectId) {
   // Xử lý dữ liệu để trả về danh sách bài giảng video
   const videoLessons = result.rows.map((row) => ({
     lesson_id: row.lesson_id,
-    title: row.title, 
-    description: row.description, 
+    title: row.title,
+    description: row.description,
     video_lesson_id: row.video_lesson_id,
     video_url: row.video_url,
     duration: row.duration,
@@ -143,7 +143,99 @@ async function getVideoLessons(userId, subjectId) {
 
 // Lấy danh sách bài tập thực hành của môn học được chọn
 async function getPracticeExercises(userId, subjectId) {
+  const query = `
+        SELECT pe.id AS exercise_id, pe.title, pe.description, pe.total_questions, pe.time_limit,
+               ps.status, ps.answers
+        FROM practice_exercises pe
+        LEFT JOIN practice_sessions ps 
+            ON pe.id = ps.exercise_id AND ps.student_id = $1
+        WHERE pe.subject_id = $2;
+    `;
 
+  const result = await db.query(query, [userId, subjectId]);
+
+  // Format dữ liệu trả về
+  const exercises = result.rows.map(row => ({
+    exercise_id: row.exercise_id,
+    title: row.title,
+    description: row.description,
+    total_questions: row.total_questions,
+    time_limit: row.time_limit,
+    status: row.status || "not_started", // Nếu chưa có session => chưa làm
+    progress: row.answers ? Object.keys(row.answers).length / row.total_questions * 100 : 0
+  }));
+
+  return exercises;
+}
+
+exports.getPracticeExercisesDetails = async (req, res) => {
+  try {
+    const user_id = req.user.user_id;
+    const { exercise_id } = req.params;
+
+    // 🟢 Chạy truy vấn chỉ 1 lần để lấy toàn bộ dữ liệu
+    const result = await db.query(
+      `SELECT 
+            pe.exercise_id AS exercise_id, pe.title AS exercise_title, pe.description, pe.total_questions, pe.time_limit,
+            q.question_id, q.content AS question_content, q.image_url AS question_image, 
+            q.explanation, q.explanation_image_url, q.difficulty_level,
+            peq.order_index, peq.marks,
+            json_agg(
+                json_build_object(
+                    'answer_id', a.answer_id, 
+                    'content', a.content, 
+                    'image_url', a.image_url, 
+                    'is_correct', a.is_correct,
+                    'order_index', a.order_index
+                )
+            ) AS answers,
+            ps.answers AS student_answers
+        FROM practice_exercises pe
+        JOIN practice_exercise_questions peq ON pe.exercise_id = peq.exercise_id
+        JOIN questions q ON peq.question_id = q.question_id
+        LEFT JOIN answers a ON q.question_id = a.question_id
+        LEFT JOIN practice_sessions ps ON pe.exercise_id = ps.exercise_id AND ps.user_id = $2
+        WHERE pe.exercise_id = $1
+        GROUP BY pe.exercise_id, q.question_id, peq.order_index, peq.marks, ps.answers
+        ORDER BY peq.order_index;`,
+      [exercise_id, user_id]
+    );
+
+    // 🟢 Kiểm tra nếu bài tập không tồn tại
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Bài tập không tồn tại" });
+    }
+
+    // 🟢 Format dữ liệu trả về
+    const exercise = {
+      exercise_id: result.rows[0].exercise_id,
+      title: result.rows[0].exercise_title,
+      description: result.rows[0].description,
+      total_questions: result.rows[0].total_questions,
+      time_limit: result.rows[0].time_limit
+    };
+
+    // 🟢 Xử lý danh sách câu hỏi
+    const questions = result.rows.map(row => ({
+      question_id: row.question_id,
+      content: row.question_content,
+      image_url: row.question_image,
+      explanation: row.explanation,
+      explanation_image_url: row.explanation_image_url,
+      difficulty_level: row.difficulty_level,
+      order_index: row.order_index,
+      marks: row.marks,
+      answers: row.answers || [],
+      student_answer: row.student_answers?.[row.question_id]?.student_answer || null,
+      is_correct: row.student_answers?.[row.question_id]?.correct || null
+    }));
+
+    res.json({ exercise, questions });
+
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết bài tập:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 }
 
 // Lấy danh sách đề thi của môn học được chọn
